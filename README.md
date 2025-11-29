@@ -1,4 +1,4 @@
-# MRI-based Prediction Model for Differentiating Endometrial Stromal Sarcoma from Cellular Leiomyoma
+# Differentiating Endometrial Stromal Sarcoma from Cellular Leiomyoma Based on a Nomogram Integrating Multimodal MRI and Clinical Data
 
 This repository contains the R code for developing and validating a prediction model to differentiate endometrial stromal sarcoma (ESS) from cellular leiomyoma (CL) using MRI-based features.
 
