@@ -253,7 +253,7 @@ All analysis scripts generate multiple output files including:
 
 If you use this code for your research, please cite our paper:
 
-[Citation information will be added upon publication]
+To be updated after journal acceptance
 
 ## License
 
@@ -263,17 +263,17 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 For questions or issues, please open an issue on GitHub or contact:
 
-[Your contact information]
+Yue Zhou  
+Email: 641613803@qq.com
 
 ## Acknowledgments
 
-- Study conducted at [Institution names]
-- Data collection period: [Time period]
+- Study conducted at Fudan University, Obstetrics & Gynecology Hospital
 - IRB approval obtained from both institutions
 
 ## Version History
 
-- **v1.0.0** (2024): Initial release with complete analysis pipeline
+- **v1.0.0** (2025): Initial release with complete analysis pipeline
 
 ---
 
