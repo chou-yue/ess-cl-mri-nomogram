@@ -1,0 +1,48 @@
+# .gitignore for R project
+
+# R related
+.Rhistory
+.RData
+.Rproj.user
+*.Rproj
+
+# Output files (optional - uncomment if you don't want to track outputs)
+# *.pdf
+# *.docx
+# *.csv
+# *.txt
+# *.svg
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Python (if any)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Data files (keep your sensitive data private)
+*.xlsx
+*.xls
+data/
+raw_data/
+
+# Temporary files
+*.tmp
+*.bak
+*.log

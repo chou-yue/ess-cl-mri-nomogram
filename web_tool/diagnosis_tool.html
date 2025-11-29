@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Endometrial Stromal Sarcoma vs Cellular Leiomyoma Differential Diagnosis Tool</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease-out;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 26px;
+            margin-bottom: 15px;
+            font-weight: 300;
+            line-height: 1.3;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+        
+        .form-container {
+            padding: 40px;
+        }
+        
+        .input-group {
+            margin-bottom: 30px;
+            animation: slideInLeft 0.6s ease-out;
+        }
+        
+        .input-group:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+        
+        .input-group:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+        
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 16px;
+        }
+        
+        select, input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e6ed;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        select:focus, input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .calculate-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(52, 152, 219, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(52, 152, 219, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(52, 152, 219, 0);
+            }
+        }
+        
+        .calculate-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(52, 152, 219, 0.3);
+        }
+        
+        .result-container {
+            margin-top: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 15px;
+            display: none;
+            animation: fadeIn 0.6s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .result-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            text-align: center;
+        }
+        
+        .probability-display {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            gap: 15px;
+        }
+        
+        .prob-box {
+            flex: 1;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .prob-box:hover {
+            transform: scale(1.05);
+        }
+        
+        .ess-prob {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+        }
+        
+        .cl-prob {
+            background: linear-gradient(135deg, #27ae60, #229954);
+            color: white;
+        }
+        
+        .prob-label {
+            font-size: 13px;
+            margin-bottom: 8px;
+            opacity: 0.9;
+            font-weight: 600;
+        }
+        
+        .prob-value {
+            font-size: 28px;
+            font-weight: 700;
+        }
+        
+        .diagnosis {
+            text-align: center;
+            padding: 25px;
+            border-radius: 12px;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            border: 3px solid;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from {
+                box-shadow: 0 0 5px currentColor;
+            }
+            to {
+                box-shadow: 0 0 20px currentColor;
+            }
+        }
+        
+        .diagnosis.ess {
+            background: linear-gradient(135deg, #fee5e5, #fecaca);
+            color: #dc2626;
+            border-color: #dc2626;
+        }
+        
+        .diagnosis.cl {
+            background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+            color: #16a34a;
+            border-color: #16a34a;
+        }
+        
+        .model-info {
+            margin-top: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            font-size: 14px;
+            color: #6c757d;
+            border-left: 4px solid #3498db;
+        }
+        
+        .model-info h4 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .model-info ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        
+        .model-info ul li {
+            margin-bottom: 5px;
+            color: #6c757d;
+        }
+        
+        .warning {
+            margin-top: 20px;
+            padding: 15px;
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            color: #856404;
+            font-size: 14px;
+        }
+        
+        .input-hint {
+            font-size: 13px;
+            color: #6c757d;
+            margin-top: 5px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Endometrial Stromal Sarcoma vs Cellular Leiomyoma<br>Differential Diagnosis Tool</h1>
+            <p>AI-assisted diagnostic tool based on logistic regression model</p>
+        </div>
+        
+        <div class="form-container">
+            <form id="diagnosisForm">
+                <div class="input-group">
+                    <label for="margin">Lesion Margin</label>
+                    <select id="margin" required>
+                        <option value="">Please select margin characteristics</option>
+                        <option value="regular">Regular</option>
+                        <option value="irregular">Irregular</option>
+                    </select>
+                    <div class="input-hint">Select the margin characteristics observed on imaging</div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="cystic">Cystic Area on T2WI</label>
+                    <select id="cystic" required>
+                        <option value="">Please select cystic component presence</option>
+                        <option value="no">No</option>
+                        <option value="yes">Yes</option>
+                    </select>
+                    <div class="input-hint">Presence of cystic signal on T2-weighted imaging</div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="threshold">Diagnostic Threshold</label>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <input type="range" id="threshold" min="0.1" max="0.9" step="0.01" value="0.477" style="flex: 1;">
+                        <span id="thresholdValue" style="font-weight: bold; color: #3498db; min-width: 60px;">0.477</span>
+                    </div>
+                    <div class="input-hint">Adjust diagnostic threshold: Current optimal threshold 0.477 (training set optimized)</div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="adc">Mean ADC Value</label>
+                    <input type="number" id="adc" step="0.001" min="0" max="5" required placeholder="Enter mean ADC value (×10⁻³ mm²/s)">
+                    <div class="input-hint">Unit: ×10⁻³ mm²/s, typical range: 0.5-2.5</div>
+                </div>
+                
+                <button type="submit" class="calculate-btn">🔬 Calculate Diagnostic Probability</button>
+            </form>
+            
+            <div id="result" class="result-container">
+                <div class="result-title">📊 Diagnostic Results Analysis</div>
+                
+                <div class="probability-display">
+                    <div class="prob-box ess-prob">
+                        <div class="prob-label">Endometrial Stromal Sarcoma</div>
+                        <div class="prob-value" id="essProb">0%</div>
+                    </div>
+                    <div class="prob-box cl-prob">
+                        <div class="prob-label">Cellular Leiomyoma</div>
+                        <div class="prob-value" id="clProb">0%</div>
+                    </div>
+                </div>
+                
+                <div id="diagnosis" class="diagnosis"></div>
+                
+                <div class="model-info">
+                    <h4>🧮 Model Information</h4>
+                    <p><strong>AUC:</strong> 0.828 (Good discriminative ability)</p>
+                    <p><strong>Optimal threshold:</strong> 0.477 (ROC curve or Youden index optimized)</p>
+                    <p><strong>Sample size:</strong> 111 cases (indexed 0-110)</p>
+                    <p><strong>Model equation:</strong> Logit(P) = 3.4640 + 1.7344×IrregularMargin + 1.6732×CysticAreaT2 - 4.7710×meanADC</p>
+                    <p><strong>Model coefficients:</strong></p>
+                    <ul>
+                        <li>Intercept: 3.4640 (SE: 1.4221, p = 0.0149)</li>
+                        <li>Irregular Margin: 1.7344 (SE: 0.4782, p = 0.0003)</li>
+                        <li>Cystic Area on T2: 1.6732 (SE: 0.6494, p = 0.0100)</li>
+                        <li>Mean ADC: -4.7710 (SE: 1.3896, p = 0.0006)</li>
+                    </ul>
+                </div>
+                
+                <div class="warning">
+                    ⚠️ <strong>Important Notice:</strong> This tool is for clinical reference only and cannot replace professional medical judgment. Final diagnosis requires pathological examination results.
+                </div>
+                
+                <div class="model-info">
+                    <h4>🚀 How to Use This Tool</h4>
+                    <p><strong>Save for use:</strong> Save this page as an HTML file for offline use in any browser</p>
+                    <p><strong>Deployment:</strong> Can be deployed on hospital intranet servers or integrated into PACS systems</p>
+                    <p><strong>Threshold recommendation:</strong> Optimal threshold set at 0.477, adjustable based on clinical needs</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Wait for page to load
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Page loaded');
+            
+            const form = document.getElementById('diagnosisForm');
+            const calculateBtn = document.querySelector('.calculate-btn');
+            
+            // Add form submit event
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                console.log('Form submitted');
+                calculateDiagnosis();
+            });
+            
+            // Add button click event (backup)
+            calculateBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('Button clicked');
+                calculateDiagnosis();
+            });
+        });
+
+        function calculateDiagnosis() {
+            console.log('Starting diagnosis calculation');
+            
+            try {
+                // Get input values
+                const margin = document.getElementById('margin').value;
+                const cystic = document.getElementById('cystic').value;
+                const adc = parseFloat(document.getElementById('adc').value);
+
+                console.log('Input values:', { margin, cystic, adc });
+
+                // Validate inputs
+                if (!margin || !cystic || isNaN(adc)) {
+                    alert('Please complete all examination parameters');
+                    return;
+                }
+
+                if (adc < 0 || adc > 5) {
+                    alert('ADC value out of reasonable range, please check input');
+                    return;
+                }
+
+                // Calculate based on logistic regression model
+                // Logit(P) = 3.4640 + 1.7344×IrregularMargin + 1.6732×CysticAreaT2 - 4.7710×meanADC
+                let logit = 3.4640;
+                
+                // Margin: irregular=1, regular=0
+                if (margin === 'irregular') {
+                    logit += 1.7344;
+                }
+                
+                // Cystic: yes=1, no=0
+                if (cystic === 'yes') {
+                    logit += 1.6732;
+                }
+                
+                // meanADC (continuous variable)
+                logit -= 4.7710 * adc;
+
+                console.log('Logit value:', logit);
+
+                // Calculate probability P = e^logit / (1 + e^logit)
+                const essProb = Math.exp(logit) / (1 + Math.exp(logit));
+                const clProb = 1 - essProb;
+
+                console.log('Calculation results:', { essProb, clProb });
+
+                // Display results
+                displayResults(essProb, clProb);
+                
+            } catch (error) {
+                console.error('Calculation error:', error);
+                alert('Error during calculation, please check inputs');
+            }
+        }
+
+        function displayResults(essProb, clProb) {
+            console.log('Displaying results');
+            
+            try {
+                // Get threshold
+                const threshold = parseFloat(document.getElementById('threshold').value);
+                
+                // Update probability display
+                const essProbElement = document.getElementById('essProb');
+                const clProbElement = document.getElementById('clProb');
+                
+                if (essProbElement && clProbElement) {
+                    essProbElement.textContent = (essProb * 100).toFixed(1) + '%';
+                    clProbElement.textContent = (clProb * 100).toFixed(1) + '%';
+                }
+
+                // Update diagnosis based on threshold
+                const diagnosisDiv = document.getElementById('diagnosis');
+                if (diagnosisDiv) {
+                    if (essProb >= threshold) {
+                        diagnosisDiv.className = 'diagnosis ess';
+                        diagnosisDiv.innerHTML = '🔴 <strong>Diagnosis: Endometrial Stromal Sarcoma</strong><br>' + 
+                            '<span style="font-size: 16px;">Probability: ' + (essProb * 100).toFixed(1) + 
+                            '% (≥ threshold ' + (threshold * 100).toFixed(0) + '%)</span>';
+                    } else {
+                        diagnosisDiv.className = 'diagnosis cl';
+                        diagnosisDiv.innerHTML = '🟢 <strong>Diagnosis: Cellular Leiomyoma</strong><br>' + 
+                            '<span style="font-size: 16px;">Probability: ' + (clProb * 100).toFixed(1) + 
+                            '% (ESS probability < threshold ' + (threshold * 100).toFixed(0) + '%)</span>';
+                    }
+                }
+
+                // Show result area
+                const resultContainer = document.getElementById('result');
+                if (resultContainer) {
+                    resultContainer.style.display = 'block';
+                    // Smooth scroll to result area
+                    setTimeout(function() {
+                        resultContainer.scrollIntoView({ behavior: 'smooth' });
+                    }, 100);
+                }
+                
+                console.log('Results display completed');
+                
+            } catch (error) {
+                console.error('Display results error:', error);
+            }
+        }
+
+        // Add input validation and threshold update
+        document.addEventListener('DOMContentLoaded', function() {
+            const adcInput = document.getElementById('adc');
+            const thresholdSlider = document.getElementById('threshold');
+            const thresholdValue = document.getElementById('thresholdValue');
+            
+            if (adcInput) {
+                adcInput.addEventListener('input', function() {
+                    const value = parseFloat(this.value);
+                    if (isNaN(value) || value < 0 || value > 5) {
+                        this.style.borderColor = '#e74c3c';
+                        this.style.backgroundColor = '#fdf2f2';
+                    } else {
+                        this.style.borderColor = '#e0e6ed';
+                        this.style.backgroundColor = 'white';
+                    }
+                });
+            }
+            
+            if (thresholdSlider && thresholdValue) {
+                thresholdSlider.addEventListener('input', function() {
+                    thresholdValue.textContent = parseFloat(this.value).toFixed(3);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
