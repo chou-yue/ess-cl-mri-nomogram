@@ -62,4 +62,4 @@ This folder contains an interactive web-based diagnostic tool for differentiatin
 ## Version
 - Version: 1.0
 - Last Updated: 2025-11-29
-- Based on: Research study "MRI-based prediction model for ESS vs CL differentiation"
+- Based on: Research study "Differentiating Endometrial Stromal Sarcoma from Cellular Leiomyoma Based on a Nomogram Integrating Multimodal MRI and Clinical Data"
