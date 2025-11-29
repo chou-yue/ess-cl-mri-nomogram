@@ -25,7 +25,7 @@ This folder contains an interactive web-based diagnostic tool for differentiatin
 1. Push this repository to GitHub
 2. Go to repository Settings → Pages
 3. Select branch and folder to deploy
-4. Your tool will be available at: `https://yourusername.github.io/repository-name/web_tool/diagnosis_tool.html`
+4. Your tool will be available at: `https://https://github.com/chou-yue/ess-cl-mri-nomogram/blob/main/web_tool/diagnosis_tool.html`
 
 ### Option 3: Hospital Intranet Deployment
 1. Copy `diagnosis_tool.html` to your hospital web server
