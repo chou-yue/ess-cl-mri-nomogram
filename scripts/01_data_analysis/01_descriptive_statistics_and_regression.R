@@ -11,6 +11,7 @@ library(pROC)
 library(rms)
 library(gt)
 library(officer)
+library(FSA)  # For Dunn's test (post-hoc pairwise comparisons)
 
 # ===================================================================
 # USER CONFIGURATION - Please modify the path below
@@ -243,6 +244,300 @@ Abbreviations: CL, cellular leiomyoma; ESS_Low, low-grade endometrial stromal sa
 Bold values indicate statistical significance (p < 0.05)."
   )%>%
   modify_caption("**Table 2. Baseline Clinical Characteristics and Qualitative MRI Features by Diagnosis Group**")
+
+# ===================================================================
+# Post-hoc Pairwise Comparisons with Bonferroni Correction
+# ===================================================================
+# For variables with p < 0.05, perform pairwise comparisons to identify which groups differ
+# Variables to test: Margin, Hemorrhage, NonEnhancingCenter
+
+cat("\n\n=== Post-hoc Pairwise Comparisons with Bonferroni Correction ===\n\n")
+
+# Helper function: Format p-value display
+format_pvalue <- function(p) {
+  if (p < 0.001) return("< 0.001")
+  if (p > 0.999) return("> 0.999")
+  return(sprintf("%.4f", p))
+}
+
+# Helper function: Mark significance
+mark_sig <- function(p_adj) {
+  if (p_adj < 0.001) return("***")
+  if (p_adj < 0.01) return("**")
+  if (p_adj < 0.05) return("*")
+  return("ns")
+}
+
+# 1) Margin (chi-square test significant, need to see which two groups differ)
+cat("--- 1. Margin (Regular vs Irregular) ---\n")
+# Create contingency table to view distribution
+margin_table <- table(final_data$Diagnosis_3Level, final_data$Margin)
+print(margin_table)
+cat("\nRow percentages:\n")
+print(round(prop.table(margin_table, margin = 1) * 100, 1))
+
+# Perform pairwise chi-square or Fisher's exact tests for categorical variables
+# CL vs ESS_Low
+cl_vs_low_margin <- final_data %>% 
+  filter(Diagnosis_3Level %in% c("CL", "ESS_Low")) %>%
+  droplevels() %>%
+  select(Diagnosis_3Level, Margin) %>%
+  table()
+cat("\nCL vs ESS_Low:\n")
+print(cl_vs_low_margin)
+test_cl_low <- fisher.test(cl_vs_low_margin)
+cat(sprintf("P-value: %s (Bonferroni adjusted: %s) %s\n", 
+            format_pvalue(test_cl_low$p.value), 
+            format_pvalue(min(test_cl_low$p.value * 3, 1)),
+            mark_sig(min(test_cl_low$p.value * 3, 1))))
+
+# CL vs ESS_High
+cl_vs_high_margin <- final_data %>% 
+  filter(Diagnosis_3Level %in% c("CL", "ESS_High")) %>%
+  droplevels() %>%
+  select(Diagnosis_3Level, Margin) %>%
+  table()
+cat("\nCL vs ESS_High:\n")
+print(cl_vs_high_margin)
+test_cl_high <- fisher.test(cl_vs_high_margin)
+cat(sprintf("P-value: %s (Bonferroni adjusted: %s) %s\n", 
+            format_pvalue(test_cl_high$p.value), 
+            format_pvalue(min(test_cl_high$p.value * 3, 1)),
+            mark_sig(min(test_cl_high$p.value * 3, 1))))
+
+# ESS_Low vs ESS_High
+low_vs_high_margin <- final_data %>% 
+  filter(Diagnosis_3Level %in% c("ESS_Low", "ESS_High")) %>%
+  droplevels() %>%
+  select(Diagnosis_3Level, Margin) %>%
+  table()
+cat("\nESS_Low vs ESS_High:\n")
+print(low_vs_high_margin)
+test_low_high <- fisher.test(low_vs_high_margin)
+cat(sprintf("P-value: %s (Bonferroni adjusted: %s) %s\n\n", 
+            format_pvalue(test_low_high$p.value), 
+            format_pvalue(min(test_low_high$p.value * 3, 1)),
+            mark_sig(min(test_low_high$p.value * 3, 1))))
+
+# 2) Hemorrhage
+cat("--- 2. Hemorrhage (No vs Yes) ---\n")
+hemorrhage_table <- table(final_data$Diagnosis_3Level, final_data$Hemorrhage)
+print(hemorrhage_table)
+cat("\nRow percentages:\n")
+print(round(prop.table(hemorrhage_table, margin = 1) * 100, 1))
+
+# CL vs ESS_Low
+cl_vs_low_hem <- final_data %>% 
+  filter(Diagnosis_3Level %in% c("CL", "ESS_Low")) %>%
+  droplevels() %>%
+  select(Diagnosis_3Level, Hemorrhage) %>%
+  table()
+cat("\nCL vs ESS_Low:\n")
+print(cl_vs_low_hem)
+test_cl_low_hem <- fisher.test(cl_vs_low_hem)
+cat(sprintf("P-value: %s (Bonferroni adjusted: %s) %s\n", 
+            format_pvalue(test_cl_low_hem$p.value), 
+            format_pvalue(min(test_cl_low_hem$p.value * 3, 1)),
+            mark_sig(min(test_cl_low_hem$p.value * 3, 1))))
+
+# CL vs ESS_High
+cl_vs_high_hem <- final_data %>% 
+  filter(Diagnosis_3Level %in% c("CL", "ESS_High")) %>%
+  droplevels() %>%
+  select(Diagnosis_3Level, Hemorrhage) %>%
+  table()
+cat("\nCL vs ESS_High:\n")
+print(cl_vs_high_hem)
+test_cl_high_hem <- fisher.test(cl_vs_high_hem)
+cat(sprintf("P-value: %s (Bonferroni adjusted: %s) %s\n", 
+            format_pvalue(test_cl_high_hem$p.value), 
+            format_pvalue(min(test_cl_high_hem$p.value * 3, 1)),
+            mark_sig(min(test_cl_high_hem$p.value * 3, 1))))
+
+# ESS_Low vs ESS_High
+low_vs_high_hem <- final_data %>% 
+  filter(Diagnosis_3Level %in% c("ESS_Low", "ESS_High")) %>%
+  droplevels() %>%
+  select(Diagnosis_3Level, Hemorrhage) %>%
+  table()
+cat("\nESS_Low vs ESS_High:\n")
+print(low_vs_high_hem)
+test_low_high_hem <- fisher.test(low_vs_high_hem)
+cat(sprintf("P-value: %s (Bonferroni adjusted: %s) %s\n\n", 
+            format_pvalue(test_low_high_hem$p.value), 
+            format_pvalue(min(test_low_high_hem$p.value * 3, 1)),
+            mark_sig(min(test_low_high_hem$p.value * 3, 1))))
+
+# 3) NonEnhancingCenter (Central Non-enhancing Area)
+cat("--- 3. Central Non-enhancing Area (No vs Yes) ---\n")
+noncenter_table <- table(final_data$Diagnosis_3Level, final_data$NonEnhancingCenter)
+print(noncenter_table)
+cat("\nRow percentages:\n")
+print(round(prop.table(noncenter_table, margin = 1) * 100, 1))
+
+# CL vs ESS_Low
+cl_vs_low_non <- final_data %>% 
+  filter(Diagnosis_3Level %in% c("CL", "ESS_Low")) %>%
+  droplevels() %>%
+  select(Diagnosis_3Level, NonEnhancingCenter) %>%
+  table()
+cat("\nCL vs ESS_Low:\n")
+print(cl_vs_low_non)
+test_cl_low_non <- fisher.test(cl_vs_low_non)
+cat(sprintf("P-value: %s (Bonferroni adjusted: %s) %s\n", 
+            format_pvalue(test_cl_low_non$p.value), 
+            format_pvalue(min(test_cl_low_non$p.value * 3, 1)),
+            mark_sig(min(test_cl_low_non$p.value * 3, 1))))
+
+# CL vs ESS_High
+cl_vs_high_non <- final_data %>% 
+  filter(Diagnosis_3Level %in% c("CL", "ESS_High")) %>%
+  droplevels() %>%
+  select(Diagnosis_3Level, NonEnhancingCenter) %>%
+  table()
+cat("\nCL vs ESS_High:\n")
+print(cl_vs_high_non)
+test_cl_high_non <- fisher.test(cl_vs_high_non)
+cat(sprintf("P-value: %s (Bonferroni adjusted: %s) %s\n", 
+            format_pvalue(test_cl_high_non$p.value), 
+            format_pvalue(min(test_cl_high_non$p.value * 3, 1)),
+            mark_sig(min(test_cl_high_non$p.value * 3, 1))))
+
+# ESS_Low vs ESS_High
+low_vs_high_non <- final_data %>% 
+  filter(Diagnosis_3Level %in% c("ESS_Low", "ESS_High")) %>%
+  droplevels() %>%
+  select(Diagnosis_3Level, NonEnhancingCenter) %>%
+  table()
+cat("\nESS_Low vs ESS_High:\n")
+print(low_vs_high_non)
+test_low_high_non <- fisher.test(low_vs_high_non)
+cat(sprintf("P-value: %s (Bonferroni adjusted: %s) %s\n\n", 
+            format_pvalue(test_low_high_non$p.value), 
+            format_pvalue(min(test_low_high_non$p.value * 3, 1)),
+            mark_sig(min(test_low_high_non$p.value * 3, 1))))
+
+# Summary of all significant differences (Bonferroni adjusted p < 0.05)
+cat("=== Summary: Post-hoc Pairwise Comparison Results with Bonferroni Correction ===\n")
+cat("Note: Three comparisons, Bonferroni correction factor = 3\n")
+cat("Significance markers: *** p < 0.001, ** p < 0.01, * p < 0.05, ns = not significant\n\n")
+
+results_summary <- data.frame(
+  Variable = c("Margin", "Margin", "Margin",
+               "Hemorrhage", "Hemorrhage", "Hemorrhage",
+               "Central Non-enhancing Area", "Central Non-enhancing Area", "Central Non-enhancing Area"),
+  Comparison = c("CL vs ESS_Low", "CL vs ESS_High", "ESS_Low vs ESS_High",
+                 "CL vs ESS_Low", "CL vs ESS_High", "ESS_Low vs ESS_High",
+                 "CL vs ESS_Low", "CL vs ESS_High", "ESS_Low vs ESS_High"),
+  P_value = c(test_cl_low$p.value, test_cl_high$p.value, test_low_high$p.value,
+              test_cl_low_hem$p.value, test_cl_high_hem$p.value, test_low_high_hem$p.value,
+              test_cl_low_non$p.value, test_cl_high_non$p.value, test_low_high_non$p.value)
+)
+
+# Limit Bonferroni-adjusted p-values to not exceed 1
+results_summary$Bonferroni_adjusted <- pmin(results_summary$P_value * 3, 1)
+results_summary$Significance <- sapply(results_summary$Bonferroni_adjusted, mark_sig)
+results_summary$Significant <- results_summary$Bonferroni_adjusted < 0.05
+
+print(results_summary)
+
+# Save detailed results to CSV
+write.csv(results_summary, 
+          file.path(output_dir, "Posthoc_Pairwise_Comparison_Results.csv"), 
+          row.names = FALSE)
+cat("\nDetailed results saved to:", file.path(output_dir, "Posthoc_Pairwise_Comparison_Results.csv"), "\n")
+
+# ===================================================================
+# Create Intuitive Difference Matrices
+# ===================================================================
+cat("\n=== Creating Intuitive Pairwise Comparison Difference Matrices ===\n\n")
+
+# Create difference matrix for each variable
+create_comparison_matrix <- function(var_name, p_cl_low, p_cl_high, p_low_high) {
+  # Adjust p-values
+  p_adj <- c(
+    min(p_cl_low * 3, 1),
+    min(p_cl_high * 3, 1),
+    min(p_low_high * 3, 1)
+  )
+  
+  # Create matrix
+  mat <- matrix("", nrow = 3, ncol = 3)
+  rownames(mat) <- c("CL", "ESS_Low", "ESS_High")
+  colnames(mat) <- c("CL", "ESS_Low", "ESS_High")
+  
+  # Fill diagonal
+  diag(mat) <- "-"
+  
+  # Fill upper triangle (p-values and significance)
+  mat[1, 2] <- sprintf("p=%.3f %s", p_adj[1], mark_sig(p_adj[1]))
+  mat[1, 3] <- sprintf("p=%.3f %s", p_adj[2], mark_sig(p_adj[2]))
+  mat[2, 3] <- sprintf("p=%.3f %s", p_adj[3], mark_sig(p_adj[3]))
+  
+  # Lower triangle shows whether there is significant difference
+  mat[2, 1] <- ifelse(p_adj[1] < 0.05, "Sig", "ns")
+  mat[3, 1] <- ifelse(p_adj[2] < 0.05, "Sig", "ns")
+  mat[3, 2] <- ifelse(p_adj[3] < 0.05, "Sig", "ns")
+  
+  cat(paste0("\n", var_name, ":\n"))
+  cat("Upper triangle: Bonferroni-adjusted p-values with significance markers\n")
+  cat("Lower triangle: Sig = significant difference (p < 0.05), ns = not significant\n\n")
+  print(mat)
+  
+  return(mat)
+}
+
+# Create difference matrices for three variables
+margin_matrix <- create_comparison_matrix(
+  "Margin", 
+  test_cl_low$p.value, 
+  test_cl_high$p.value, 
+  test_low_high$p.value
+)
+
+hemorrhage_matrix <- create_comparison_matrix(
+  "Hemorrhage", 
+  test_cl_low_hem$p.value, 
+  test_cl_high_hem$p.value, 
+  test_low_high_hem$p.value
+)
+
+noncenter_matrix <- create_comparison_matrix(
+  "Central Non-enhancing Area", 
+  test_cl_low_non$p.value, 
+  test_cl_high_non$p.value, 
+  test_low_high_non$p.value
+)
+
+# Save matrices to Excel (requires openxlsx package)
+if (requireNamespace("openxlsx", quietly = TRUE)) {
+  library(openxlsx)
+  wb <- createWorkbook()
+  
+  addWorksheet(wb, "Margin")
+  writeData(wb, "Margin", margin_matrix, rowNames = TRUE)
+  
+  addWorksheet(wb, "Hemorrhage")
+  writeData(wb, "Hemorrhage", hemorrhage_matrix, rowNames = TRUE)
+  
+  addWorksheet(wb, "NonEnhancingCenter")
+  writeData(wb, "NonEnhancingCenter", noncenter_matrix, rowNames = TRUE)
+  
+  addWorksheet(wb, "Summary")
+  writeData(wb, "Summary", results_summary)
+  
+  saveWorkbook(wb, file.path(output_dir, "Posthoc_Comparison_Matrices.xlsx"), overwrite = TRUE)
+  cat("\nDifference matrices saved to:", file.path(output_dir, "Posthoc_Comparison_Matrices.xlsx"), "\n")
+} else {
+  cat("\nNote: Install openxlsx package to export difference matrices in Excel format\n")
+}
+
+cat("\n=== Post-hoc Analysis Complete ===\n\n")
+
+# ===================================================================
+# End of Post-hoc Analysis
+# ===================================================================
+
 
 # =============== Convert to flextable and set line spacing & padding =================
 ft_adc <- table1_adc %>%
